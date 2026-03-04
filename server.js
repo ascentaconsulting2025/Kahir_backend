@@ -11,15 +11,21 @@ const app = express();
 app.use(helmet());
 app.use(compression());
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGINS?.split(",") || [
+const corsOrigins = process.env.CORS_ORIGINS 
+  ? process.env.CORS_ORIGINS.split(",").map(o => o.trim())
+  : [
       "http://localhost:3000",
       "http://localhost:3001",
       "https://admin.gpkahir.in",
       "https://www.gpkahir.in",
       "https://gpkahir.in",
-    ],
+    ];
+
+console.log("✅ CORS Allowed Origins:", corsOrigins);
+
+app.use(
+  cors({
+    origin: corsOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
